@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>okta_post_message demo</title>
+</head>
+<body>
+<script>
+var authorize_url = "https://dragos.okta.com/oauth2/aus38el88lfcL6PFg2p7/v1/authorize";
+var response_type = "id_token%20token";
+var client_id     = "0oa2fatx70JGiU2TA2p7";
+var redirect_uri  = "https://your.website.com/callback";
+var state         = 'abc';
+var nonce         = 'abc';
+var scope         = 'openid';
+
+var iframe = document.createElement("iframe");
+iframe.setAttribute("src", authorize_url + "?response_type=" + response_type + "&client_id=" + client_id + "&redirect_uri=" + redirect_uri + "&state=" + state + "&nonce=" + nonce + "&response_mode=okta_post_message&scope=" + scope);
+iframe.setAttribute("id", "myIFrame");
+iframe.style.width = "0px";
+iframe.style.height = "0px";
+document.body.appendChild(iframe);
+
+document.getElementById('myIFrame').contentWindow.postMessage(null);
+
+window.addEventListener('message',function(event) {
+	console.log('Full response received: ', event.data);
+	console.log('Access token: ', event.data.access_token);
+	console.log('ID token: ', event.data.id_token);
+},false);
+</script>
+</body>
+</html>

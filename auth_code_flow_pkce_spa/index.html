@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Auth Code flow with PKCE</title>
+</head>
+<body>
+<script type="text/javascript">
+var authorize_url  = "https://dragos.okta.com/oauth2/v1/authorize";
+var token_url      = "https://dragos.okta.com/oauth2/v1/token";
+var client_id      = "0oa3pkx35h6fRyG3K2p7";
+var redirect_uri   = "https://your.website.com/callback";
+var state          = "abc";
+var scope          = "openid offline_access";
+var nonce          = "abc";
+var code_challenge = "ejCI_ouFJ_G2aVBvEpIQllkSx5Q94fKQnHeKtCshpLM";
+var code_verifier  = "ac0639dbecf900ddfb3aabd84ab0ff07ac0639dbecf900ddfb3aabd84ab0ff07";
+
+var qs = (function(a) {
+    if (a == "") return {};
+    var b = {};
+    for (var i = 0; i < a.length; ++i)
+    {
+        var p=a[i].split('=', 2);
+        if (p.length == 1)
+            b[p[0]] = "";
+        else
+            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+    }
+    return b;
+})(window.location.search.substr(1).split('&'));
+
+if(qs['code'] == null)
+{
+	document.location.href = authorize_url + "?response_type=code&client_id=" + client_id + "&redirect_uri=" + redirect_uri + "&state=" + state + "&scope=" + scope + "&nonce=" + nonce + "&code_challenge=" + code_challenge + "&code_challenge_method=S256";
+}else{
+    var xhr = new XMLHttpRequest();
+    if ("withCredentials" in xhr) {
+        xhr.onerror = function() {
+          document.write('Invalid URL or Cross-Origin Request Blocked.  You must explicitly add this site (' + window.location.origin + ') to the list of allowed websites in the administrator UI');
+        }
+        xhr.onload = function() {
+            document.write(this.responseText);
+        };
+        xhr.open('POST', token_url, true);
+        xhr.setRequestHeader("Accept", 'application/json');
+        xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
+        xhr.send('grant_type=authorization_code&client_id=' + client_id + '&redirect_uri=' + redirect_uri + '&code=' + qs['code'] + '&code_verifier=' + code_verifier);
+    } else {
+        document.write("CORS is not supported for this browser!")
+    }
+}
+</script>
+</body>
+</html>
