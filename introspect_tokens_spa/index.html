@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Token introspection for SPA</title>
+</head>
+<body>
+<script type="text/javascript">
+var introspect_endpoint = "https://dragos.okta.com/oauth2/default/v1/introspect";
+var token = "";
+var token_hint = "access_token";
+var client_id = "0oa59wcc2deYWrQkh2p7";
+var xhr = new XMLHttpRequest();
+if ("withCredentials" in xhr) {
+    xhr.onerror = function() {
+      console.log('Invalid URL or Cross-Origin Request Blocked.  You must explicitly add this site (' + window.location.origin + ') to the list of allowed websites in the administrator UI');
+    }
+    xhr.onload = function() {
+        console.log(this.responseText);
+    };
+    xhr.open('POST', '', true);
+        xhr.setRequestHeader("Accept", 'application/json');
+        xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
+    xhr.withCredentials = true;
+    xhr.send('token=' + token + "&token_type_hint=" + token_hint + "&client_id=" + client_id);
+} else {
+    console.log("CORS is not supported for this browser!")
+}
+</script>
+</body>
+</html>
