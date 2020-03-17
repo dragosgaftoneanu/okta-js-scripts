@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function sendMessageToOkta (message) 
+{
+	var win = document.getElementById('myIFrame').contentWindow;
+	if (win) {
+	  win.postMessage(JSON.stringify(message), "https://dragos.okta.com");
+	}
+}
+
+function onMessageReceivedFromOkta(event) {
+	try {
+	  var message = JSON.parse(event.data);
+	  if (message && message.type === 'FingerprintServiceReady') {
+		sendMessageToOkta({type: 'GetFingerprint'});
+	  } else if (message && message.type === 'FingerprintAvailable') {
+		console.log("Device Fingerprint successfully retrieved: " + message.fingerprint);
+	  } else {
+		console.log('No data was retrieved.');
+	  }
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+let iframe = document.createElement("iframe");
+iframe.setAttribute("src", "https://dragos.okta.com/auth/services/devicefingerprint");
+iframe.setAttribute("id", "myIFrame");
+iframe.style.width = "0px";
+iframe.style.height = "0px";
+document.body.appendChild(iframe);
+
+window.addEventListener('message', onMessageReceivedFromOkta, false);
+</script>
+</body>
